@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click the Circle Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('download.jpeg');
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+        #gameContainer {
+            display: none;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .circle {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            transition: transform 0.1s ease-in-out;
+        }
+        #score, #timer {
+            position: absolute;
+            font-size: 24px;
+            color: white;
+            text-shadow: 2px 2px 4px #000000;
+        }
+        #score {
+            top: 20px;
+            left: 20px;
+        }
+        #timer {
+            top: 20px;
+            right: 20px;
+        }
+        #startScreen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            text-shadow: 2px 2px 4px #000000;
+        }
+        #startButton {
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <h1>Click the Circle Game</h1>
+        <button id="startButton">Start Game</button>
+    </div>
+    <div id="gameContainer">
+        <div id="score">Score: 0</div>
+        <div id="timer">Time: 20</div>
+        <div class="circle" id="circle"></div>
+    </div>
+    <audio id="backgroundMusic" loop>
+        <source src="background-music.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+        let score = 0;
+        let timeLeft = 10;
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const circle = document.getElementById('circle');
+        const startScreen = document.getElementById('startScreen');
+        const gameContainer = document.getElementById('gameContainer');
+        const startButton = document.getElementById('startButton');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        function moveCircle() {
+            const x = Math.random() * (window.innerWidth - 50);
+            const y = Math.random() * (window.innerHeight - 50);
+            circle.style.left = x + 'px';
+            circle.style.top = y + 'px';
+            circle.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                circle.style.transform = 'scale(1)';
+            }, 100);
+        }
+
+        function updateScore() {
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
+
+        function updateTime() {
+            timeLeft--;
+            timerDisplay.textContent = `Time: ${timeLeft}`;
+            if (timeLeft === 0) {
+                clearInterval(gameInterval);
+                circle.style.display = 'none';
+                backgroundMusic.pause();
+                alert(`Game Over! Your score is ${score}`);
+                resetGame();
+            }
+        }
+
+        function resetGame() {
+            score = 0;
+            timeLeft = 20;
+            scoreDisplay.textContent = `Score: ${score}`;
+            timerDisplay.textContent = `Time: ${timeLeft}`;
+            circle.style.display = 'block';
+            gameContainer.style.display = 'none';
+            startScreen.style.display = 'flex';
+        }
+
+        startButton.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            gameContainer.style.display = 'block';
+            backgroundMusic.play();
+            moveCircle();
+            gameInterval = setInterval(updateTime, 1000);
+        });
+
+        circle.addEventListener('click', () => {
+            updateScore();
+            moveCircle();
+        });
+
+        let gameInterval;
+    </script>
+</body>
+</html>
